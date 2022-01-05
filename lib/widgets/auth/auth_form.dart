@@ -16,13 +16,15 @@ class _AuthFormState extends State<AuthForm> {
   late final _userName;
   late final _userPassword;
 
+  var _isLogin = true;
+
   void _trySubmit() {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
 
     if (isValid) {
       _formKey.currentState!.save();
-      //use values now 
+      //use values now
       print(_userEmail);
       print(_userName);
       print(_userPassword);
@@ -43,6 +45,7 @@ class _AuthFormState extends State<AuthForm> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
+                    key: const ValueKey('email'),
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email address',
@@ -57,21 +60,24 @@ class _AuthFormState extends State<AuthForm> {
                       _userEmail = value;
                     },
                   ),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'User Name',
+                  if (!_isLogin)
+                    TextFormField(
+                      key: const ValueKey('name'),
+                      decoration: const InputDecoration(
+                        labelText: 'User Name',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty || value.length < 4) {
+                          return 'Please enter at least 4 characters';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _userName = value;
+                      },
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty || value.length < 4) {
-                        return 'Please enter at least 4 characters';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _userName = value;
-                    },
-                  ),
                   TextFormField(
+                    key : const ValueKey('pass'),
                     decoration: const InputDecoration(
                       labelText: 'Password',
                     ),
@@ -90,12 +96,16 @@ class _AuthFormState extends State<AuthForm> {
                     height: 12,
                   ),
                   ElevatedButton(
-                    child: const Text('Login'),
+                    child: Text(_isLogin ? 'Login' : 'Create new'),
                     onPressed: _trySubmit,
                   ),
                   TextButton(
-                    onPressed: () {},
-                    child: const Text('Create new'),
+                    child: Text(_isLogin ? 'Create new' : 'Login instead'),
+                    onPressed: () {
+                      setState(() {
+                        _isLogin = !_isLogin;
+                      });
+                    },
                   ),
                 ],
               ),
