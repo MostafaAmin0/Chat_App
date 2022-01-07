@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  const AuthForm({
+  const AuthForm(
+    this._submitFun, {
     Key? key,
   }) : super(key: key);
+
+  final void Function(String, String, String, bool, BuildContext) _submitFun;
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -12,9 +15,9 @@ class AuthForm extends StatefulWidget {
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
 
-  late final _userEmail;
-  late final _userName;
-  late final _userPassword;
+  late final String _userEmail;
+  late final String _userName;
+  late final String _userPassword;
 
   var _isLogin = true;
 
@@ -24,10 +27,13 @@ class _AuthFormState extends State<AuthForm> {
 
     if (isValid) {
       _formKey.currentState!.save();
-      //use values now
-      print(_userEmail);
-      print(_userName);
-      print(_userPassword);
+      widget._submitFun(
+        _userEmail.trim(),
+        _userName.trim(),
+        _userPassword.trim(),
+        _isLogin,
+        context,
+      );
     }
   }
 
@@ -57,7 +63,7 @@ class _AuthFormState extends State<AuthForm> {
                       return null;
                     },
                     onSaved: (value) {
-                      _userEmail = value;
+                      _userEmail = value!;
                     },
                   ),
                   if (!_isLogin)
@@ -73,11 +79,11 @@ class _AuthFormState extends State<AuthForm> {
                         return null;
                       },
                       onSaved: (value) {
-                        _userName = value;
+                        _userName = value!;
                       },
                     ),
                   TextFormField(
-                    key : const ValueKey('pass'),
+                    key: const ValueKey('pass'),
                     decoration: const InputDecoration(
                       labelText: 'Password',
                     ),
@@ -89,7 +95,7 @@ class _AuthFormState extends State<AuthForm> {
                       return null;
                     },
                     onSaved: (value) {
-                      _userPassword = value;
+                      _userPassword = value!;
                     },
                   ),
                   const SizedBox(
