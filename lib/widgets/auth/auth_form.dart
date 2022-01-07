@@ -15,9 +15,9 @@ class AuthForm extends StatefulWidget {
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
 
-  late final String _userEmail;
-  late final String _userName;
-  late final String _userPassword;
+  String _userEmail = '';
+  String _userName = '';
+  String _userPassword = '';
 
   var _isLogin = true;
 
