@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import './message_bubble.dart';
@@ -8,6 +9,8 @@ class Messages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('/Chat')
@@ -21,10 +24,15 @@ class Messages extends StatelessWidget {
           return const Text('Something went wrong');
         }
         final chatData = chatSnapshot.data!.docs;
+
         return ListView.builder(
           reverse: true,
           itemCount: chatData.length,
-          itemBuilder: (ctx, index) => MessageBubble(chatData[index]['text']),
+          itemBuilder: (ctx, index) => MessageBubble(
+            chatData[index]['text'],
+            chatData[index]['userId'] == currentUser!.uid,
+            key: ValueKey(chatData[index].id),//this is doc Id
+          ),
         );
       },
     );
